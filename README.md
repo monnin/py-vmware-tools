@@ -2,7 +2,8 @@ VMWare Tools
 
 I use the tools to help me automate some activities for a vSphere cluster. They
 are likely not going to work for you without some modifications.  You will
-at least need to change the login code 
+at least change where Python looks for the library and you will also need to 
+change the login code 
 
 from:
 
@@ -22,3 +23,4 @@ Layout:
 	bin/		Tools that do not alter VMWare, just queries it
 	sbin/		Tools that will make changes to VMWare (be careful here)
 
+You will need the pyVomi module, and probably a few "standard" Python modules.
