@@ -68,7 +68,7 @@ def store_vm_file(filetype,filename):
 #	Get all of the files associated with all of the virtual machines
 #
 
-def find_all_vm_files(context):
+def find_all_vm_files(context, ignore_path, showdiff):
 	all_vms = find_all_vms(context)
 
 	for one_vm in all_vms:
@@ -82,6 +82,20 @@ def find_all_vm_files(context):
 
 		if (logpath is None):
 			logpath = path
+
+		# Does the user want to see name <=> dir oddities?
+		if (showdiff):
+			basedir = path
+			if ("] " in basedir):
+				(x,basedir) = basedir.split("] ",1)
+
+			basedir = basedir.rstrip("/")
+
+			sysName = one_vm.config.name
+			if (sysName != basedir):
+				check_if_ignored(path.rstrip("/"), ignore_path,
+				 	"DirDiff(Has VM)",
+				 	"diff sysName " + sysName)
 
 		store_vm_file("L",logpath.rstrip("/"))
 		store_vm_file("V",path.rstrip("/"))
@@ -365,8 +379,11 @@ def arg_show_options(s):
 			elif (word[0] == 'a'):
 				word = 'all'
 
-			elif (word[0] == 'd'):
+			elif (word[0:2] == 'du'):
 				word = 'duplicate'
+
+			elif (word[0:2] == 'di'):
+				word = 'diffname'
 
 			elif (word[0] == 'o'):
 				word = 'orphaned'
@@ -397,6 +414,7 @@ def arg_show_options(s):
 	# Nothing in the "plus" list?  Default to all
 	if (len(show_plus) == 0):
 		show_plus.add("duplicate")
+		show_plus.add("diffname")
 		show_plus.add("extra")
 		show_plus.add("empty-dirs")
 		show_plus.add("missing")
@@ -436,7 +454,7 @@ def parse_args():
 	parser.add_argument('--show', 
 		type=arg_show_options,
                 help='What items to show ' + 
-		     '(missing,extra,duplicate,empty-dir,orphaned)'
+		     '(missing,extra,diffname,duplicate,empty-dir,orphaned)'
 		)
 
 	parser.add_argument('--type', 
@@ -511,7 +529,7 @@ def main():
 	context = loginutils.netlablogin(server)
 	
 	output(2,"::Finding all VM files...")
-	find_all_vm_files(context)
+	find_all_vm_files(context, ignore_path, 'diffname' in show_options)
 
 	output(2,"::Finding all Datastores...")
 	stores = find_all_datastores(context)
