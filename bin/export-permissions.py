@@ -56,7 +56,5 @@ def main():
 		print(name,type,p.principal,
 			prop,vmwareutils.get_rolename(p.roleId),sep="\t")
 
-	sambautils.disable_user(ADMIN_SVC_ACCT)
-
 
 main()	
