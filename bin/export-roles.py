@@ -35,7 +35,5 @@ def main():
 			if (not p.startswith("System.")):
 				print(r.name,r.info.label,p,sep="\t")
 
-	sambautils.disable_user(ADMIN_SVC_ACCT)
-
 
 main()	
